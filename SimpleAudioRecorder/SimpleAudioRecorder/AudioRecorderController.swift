@@ -72,11 +72,13 @@ class AudioRecorderController: UIViewController {
 	func play() { // 7
 		audioPlayer?.play()
 		updateViews() // 15
+		startTimer() // 21
 	}
 
 	func pause() { // 8
 		audioPlayer?.pause()
 		updateViews() // 16
+		cancelTimer() // 22
 	}
 
 	func playPause() { // 9
@@ -85,6 +87,20 @@ class AudioRecorderController: UIViewController {
 		} else {
 			play()
 		}
+	}
+
+	private func startTimer() { // 17
+		cancelTimer() // 23
+		timer = Timer.scheduledTimer(timeInterval: 0.03, target: self, selector: #selector(updateTimer(timer:)), userInfo: nil, repeats: true)
+	}
+
+	@objc private func updateTimer(timer: Timer) { // 18
+		updateViews()
+	}
+
+	private func cancelTimer() { // 18
+		timer?.invalidate() // 19
+		timer = nil // 20
 	}
 
 	// Record APIs
@@ -103,7 +119,8 @@ class AudioRecorderController: UIViewController {
 		playButton.setTitle(playButtonTitle, for: .normal) // 12
 
 		let elapsedTime = audioPlayer?.currentTime ?? 0 // 13 // If nothing is playing then it goes to zero
-		timeLabel.text = "\(elapsedTime)" // 14
+		//timeLabel.text = "\(elapsedTime)" // 14
+		timeLabel.text = timeFormatter.string(for: elapsedTime) // 14 // 24
 	}
 }
 
