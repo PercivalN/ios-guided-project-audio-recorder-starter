@@ -11,10 +11,8 @@ import AVFoundation // 1. for audio players
 
 class AudioRecorderController: UIViewController {
 
-	var audioPlayer: AVAudioPlayer? // 2
-	var isPlaying: Bool { // 6
-		audioPlayer?.isPlaying ?? false
-	}
+
+
 
     @IBOutlet weak var recordButton: UIButton!
     @IBOutlet weak var playButton: UIButton!
@@ -54,6 +52,9 @@ class AudioRecorderController: UIViewController {
 	// - timestamp
 	// - is it playing?
 
+	var audioPlayer: AVAudioPlayer? // 2
+	var timer: Timer? // 10
+
 	private func loadAudio() {
 		// piano.mp3
 		// App Bundle
@@ -64,12 +65,18 @@ class AudioRecorderController: UIViewController {
 		audioPlayer = try! AVAudioPlayer(contentsOf: songURL) // 4. // FIXME: catch error and print
 	}
 
+	var isPlaying: Bool { // 6
+		audioPlayer?.isPlaying ?? false
+	}
+
 	func play() { // 7
 		audioPlayer?.play()
+		updateViews() // 15
 	}
 
 	func pause() { // 8
 		audioPlayer?.pause()
+		updateViews() // 16
 	}
 
 	func playPause() { // 9
@@ -90,5 +97,13 @@ class AudioRecorderController: UIViewController {
     @IBAction func recordButtonPressed(_ sender: Any) {
     
     }
+
+	private func updateViews() {
+		let playButtonTitle = isPlaying ? "Pause" : "Play" // 11 // Pause or Play
+		playButton.setTitle(playButtonTitle, for: .normal) // 12
+
+		let elapsedTime = audioPlayer?.currentTime ?? 0 // 13 // If nothing is playing then it goes to zero
+		timeLabel.text = "\(elapsedTime)" // 14
+	}
 }
 
